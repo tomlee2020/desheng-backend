@@ -21,3 +21,19 @@ CREATE TABLE IF NOT EXISTS seeds (
     FULLTEXT INDEX ft_variety_name (variety_name),
     FULLTEXT INDEX ft_approval_number (approval_number)
 );
+
+-- Create search history table
+CREATE TABLE IF NOT EXISTS search_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    query VARCHAR(500) NOT NULL,
+    search_type VARCHAR(50) DEFAULT 'keyword',
+    result_count INT DEFAULT 0,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_id (user_id),
+    INDEX idx_query (query),
+    INDEX idx_created_at (created_at),
+    INDEX idx_user_query (user_id, query)
+);
