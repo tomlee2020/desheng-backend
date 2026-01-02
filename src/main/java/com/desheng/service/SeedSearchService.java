@@ -57,8 +57,7 @@ public class SeedSearchService {
         
         SearchHits<SeedDocument> searchHits = elasticsearchTemplate.search(query, SeedDocument.class);
         
-        List<SeedDocument> documents = searchHits.getContent()
-                .stream()
+        List<SeedDocument> documents = searchHits.stream()
                 .map(hit -> hit.getContent())
                 .collect(Collectors.toList());
         
@@ -77,8 +76,7 @@ public class SeedSearchService {
         
         SearchHits<SeedDocument> searchHits = elasticsearchTemplate.search(query, SeedDocument.class);
         
-        List<SeedDocument> documents = searchHits.getContent()
-                .stream()
+        List<SeedDocument> documents = searchHits.stream()
                 .map(hit -> hit.getContent())
                 .collect(Collectors.toList());
         
@@ -97,8 +95,7 @@ public class SeedSearchService {
         
         SearchHits<SeedDocument> searchHits = elasticsearchTemplate.search(query, SeedDocument.class);
         
-        List<SeedDocument> documents = searchHits.getContent()
-                .stream()
+        List<SeedDocument> documents = searchHits.stream()
                 .map(hit -> hit.getContent())
                 .collect(Collectors.toList());
         
@@ -157,8 +154,7 @@ public class SeedSearchService {
         
         SearchHits<SeedDocument> searchHits = elasticsearchTemplate.search(query, SeedDocument.class);
         
-        List<SeedDocument> documents = searchHits.getContent()
-                .stream()
+        List<SeedDocument> documents = searchHits.stream()
                 .map(hit -> hit.getContent())
                 .collect(Collectors.toList());
         

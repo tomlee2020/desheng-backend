@@ -1,17 +1,15 @@
 package com.desheng.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.desheng.mapper.SearchHistoryMapper;
 import com.desheng.mapper.SeedMapper;
 import com.desheng.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.embedding.EmbeddingClient;
-import org.springframework.ai.embedding.EmbeddingResponse;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.stereotype.Service;
 
-import java.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,7 +26,7 @@ public class RecommendService extends ServiceImpl<SeedMapper, Seed> {
     private final SeedMapper seedMapper;
     private final SearchHistoryMapper searchHistoryMapper;
     private final SemanticSearchService semanticSearchService;
-    private final EmbeddingClient embeddingClient;
+    private final EmbeddingModel embeddingModel;
 
     /**
      * 获取个性化推荐

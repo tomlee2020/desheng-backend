@@ -2,7 +2,6 @@ package com.desheng.service;
 
 import com.desheng.model.Seed;
 import com.desheng.model.SeedVector;
-import com.desheng.repository.SeedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
@@ -27,7 +26,7 @@ public class SemanticSearchService {
 
     private final VectorStore vectorStore;
     private final EmbeddingModel embeddingModel;
-    private final SeedRepository seedRepository;
+    private final SeedService seedService;
 
     /**
      * 将所有种子数据向量化并存储到 Redis 向量存储
@@ -38,7 +37,7 @@ public class SemanticSearchService {
         
         try {
             // 1. 从 MySQL 查询所有种子
-            List<Seed> seeds = seedRepository.findAll();
+            List<Seed> seeds = seedService.list();
             log.info("Retrieved {} seeds from MySQL", seeds.size());
             
             // 2. 转换为 Document 对象（Spring AI 的标准格式）
@@ -68,7 +67,11 @@ public class SemanticSearchService {
         
         try {
             // 1. 使用向量存储进行相似度搜索
-            List<Document> results = vectorStore.similaritySearch(query, topK);
+            // Spring AI 1.0.0 中，直接使用字符串查询，然后限制结果数量
+            List<Document> allResults = vectorStore.similaritySearch(query);
+            List<Document> results = allResults.stream()
+                    .limit(topK)
+                    .collect(Collectors.toList());
             
             // 2. 将结果转换为 SeedVector 对象
             List<SeedVector> vectors = results.stream()
@@ -114,6 +117,36 @@ public class SemanticSearchService {
     }
 
     /**
+     * 根据查询文本搜索种子
+     * @param query 查询文本
+     * @param limit 返回结果数量
+     * @return 种子列表
+     */
+    public List<Seed> searchByQuery(String query, int limit) {
+        log.info("Searching seeds by query: {} (limit: {})", query, limit);
+        
+        try {
+            // 使用语义搜索获取相似度最高的结果
+            List<SeedVector> vectors = semanticSearch(query, limit);
+            
+            // 根据 seedId 从数据库获取完整的 Seed 对象
+            List<Long> seedIds = vectors.stream()
+                    .map(SeedVector::getSeedId)
+                    .collect(Collectors.toList());
+            
+            if (seedIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+            
+            return seedService.listByIds(seedIds);
+            
+        } catch (Exception e) {
+            log.error("Error searching seeds by query", e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
      * 将 Seed 转换为 Spring AI Document
      */
     private Document seedToDocument(Seed seed) {
@@ -144,8 +177,9 @@ public class SemanticSearchService {
                 .approvalNumber((String) metadata.get("approvalNumber"))
                 .cropType((String) metadata.get("cropType"))
                 .company((String) metadata.get("company"))
-                .content(document.getContent())
-                .similarity(document.getScore())
+                .content(document.getText())
+                .similarity(document.getMetadata().get("distance") != null ? 
+                    ((Number) document.getMetadata().get("distance")).doubleValue() : 0.0)
                 .build();
     }
 }

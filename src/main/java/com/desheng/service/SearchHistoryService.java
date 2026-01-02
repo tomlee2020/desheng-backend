@@ -1,7 +1,7 @@
 package com.desheng.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.desheng.mapper.SearchHistoryMapper;
 import com.desheng.model.HotSearchDto;
 import com.desheng.model.SearchHistory;

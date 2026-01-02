@@ -1,6 +1,7 @@
 package com.desheng.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.desheng.model.HotSearchDto;
 import com.desheng.model.SearchHistory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
